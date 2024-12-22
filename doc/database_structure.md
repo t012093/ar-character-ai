@@ -77,6 +77,7 @@ AI Friend - 愛嬌とユーモアのあるパーソナルAI
     * `sender` (VARCHAR, NOT NULL)
     * `content` (TEXT, NOT NULL)
     * `timestamp` (TIMESTAMP WITH TIME ZONE, DEFAULT now())
+    * `emotion` (VARCHAR) -- AIが認識した感情 (喜び, 悲しみ, 怒り, 恐れ, 平常)
 
 **説明:**
 
@@ -85,6 +86,7 @@ AI Friend - 愛嬌とユーモアのあるパーソナルAI
 * `sender`: メッセージの送信者（'user' または 'ai'）。アプリケーション側でチェック。
 * `content`: メッセージの内容。
 * `timestamp`: メッセージ送信日時。
+* `emotion`: AIが認識したユーザーの感情 (喜び, 悲しみ, 怒り, 恐れ, 平常)。
 
 **制約:**
 

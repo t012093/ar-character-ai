@@ -8,59 +8,53 @@ AI Friend - 愛嬌とユーモアのあるパーソナルAI
 
 システムの全体構成を示す。
 
-```plantuml
-@startuml
-left to right direction
+```mermaid
+graph LR
+    subgraph クライアント
+        arglass([ARグラス])
+        smartphone([スマートフォン])
+        pc([PC])
+    end
+    subgraph Unity
+        ar_module([AR表示モジュール])
+        ui([UI])
+    end
+    subgraph Pythonサーバー
+        conversation([会話管理モジュール])
+        emotion([感情認識モジュール])
+        empathy([共感応答モジュール])
+        character([キャラクター表現モジュール])
+        user_mgmt([ユーザー管理モジュール])
+        auth([認証モジュール])
+        database(Supabase)
+    end
+    openai(OpenAI API)
+    speech_api(音声認識API)
+    tts_api(音声合成API)
 
-package "クライアント" {
-  [ARグラス] as arglass
-  [スマートフォン] as smartphone
-  [PC] as pc
-}
+    arglass --> ar_module : 音声
+    smartphone --> ar_module : 音声
+    pc --> ui : 音声
 
-package "Unity" {
-  [AR表示モジュール] as ar_module
-  [UI] as ui
-}
+    ar_module --> conversation : テキスト、感情データ
+    ui --> conversation : テキスト、感情データ
 
-package "Pythonサーバー" {
-  [会話管理モジュール] as conversation
-  [感情認識モジュール] as emotion
-  [共感応答モジュール] as empathy
-  [キャラクター表現モジュール] as character
-  [ユーザー管理モジュール] as user_mgmt
-  [認証モジュール] as auth
-  database Supabase
-}
+    conversation --> openai : テキスト
+    openai --> conversation : テキスト
+    conversation --> speech_api : 音声
+    speech_api --> conversation : テキスト
+    conversation --> tts_api : テキスト
+    tts_api --> conversation : 音声
+    conversation --> database : 会話履歴
 
-cloud "OpenAI API" as openai
-cloud "音声認識API" as speech_api
-cloud "音声合成API" as tts_api
+    emotion --> conversation : 感情データ
 
-arglass --> ar_module : 音声
-smartphone --> ar_module : 音声
-pc --> ui : 音声
+    empathy --> conversation : 共感情報
 
-ar_module --> conversation : テキスト、感情データ
-ui --> conversation : テキスト、感情データ
+    character --> conversation : キャラクター情報
 
-conversation --> openai : テキスト
-openai --> conversation : テキスト
-conversation --> speech_api : 音声
-speech_api --> conversation : テキスト
-conversation --> tts_api : テキスト
-tts_api --> conversation : 音声
-conversation --> Supabase : 会話履歴
-
-emotion --> conversation : 感情データ
-
-empathy --> conversation : 共感情報
-
-character --> conversation : キャラクター情報
-
-user_mgmt --> Supabase : ユーザーデータ
-auth --> Supabase : ユーザーデータ
-@enduml
+    user_mgmt --> database : ユーザーデータ
+    auth --> database : ユーザーデータ
 ```
 
 ## 2. 各機能の詳細設計
@@ -228,45 +222,31 @@ auth --> Supabase : ユーザーデータ
 
 ### 5.1 会話機能
 
-```plantuml
-@startuml
-participant ユーザー as User
-participant クライアントアプリ as Client
-participant 音声認識API as SpeechAPI
-participant 感情認識モジュール as Emotion
-participant Pythonサーバー as Server
-participant OpenAI_API as OpenAI
-participant 音声合成API as TTS
-database データベース as DB
+```mermaid
+graph LR
+    actor User(ユーザー)
+    actor Client(クライアントアプリ)
+    actor SpeechAPI(音声認識API)
+    actor Emotion(感情認識モジュール)
+    actor Server(Pythonサーバー)
+    actor OpenAI(OpenAI_API)
+    actor TTS(音声合成API)
+    database DB(データベース)
 
-User -> Client : 発話(音声)
-activate Client
-Client -> SpeechAPI : 音声データ
-activate SpeechAPI
-SpeechAPI --> Client : テキストデータ
-deactivate SpeechAPI
-Client -> Emotion : 音声データ
-activate Emotion
-Emotion --> Client : 感情データ
-deactivate Emotion
-Client -> Server : テキストデータ、感情データ
-activate Server
-Server -> OpenAI : テキストデータ、感情データ
-activate OpenAI
-OpenAI --> Server : 応答テキスト
-deactivate OpenAI
-Server -> TTS : 応答テキスト
-activate TTS
-TTS -> Server : 応答音声データ
-deactivate TTS
-Server --> Client : 応答音声データ
-Client --> User : 応答(音声)
-deactivate Server
-Client -> DB : 会話履歴保存
-activate DB
-DB --> Client : 保存完了
-deactivate DB
-@enduml
+    User --> Client : 発話(音声)
+    Client --> SpeechAPI : 音声データ
+    SpeechAPI --> Client : テキストデータ
+    Client --> Emotion : 音声データ
+    Emotion --> Client : 感情データ
+    Client --> Server : テキストデータ、感情データ
+    Server --> OpenAI : テキストデータ、感情データ
+    OpenAI --> Server : 応答テキスト
+    Server --> TTS : 応答テキスト
+    TTS --> Server : 応答音声データ
+    Server --> Client : 応答音声データ
+    Client --> User : 応答(音声)
+    Client --> DB : 会話履歴保存
+    DB --> Client : 保存完了
 ```
 
 1. ユーザーの発話は、クライアントアプリケーションで録音されます。
@@ -279,24 +259,18 @@ deactivate DB
 
 ### 5.2 感情認識機能
 
-```plantuml
-@startuml
-participant ユーザー as User
-participant クライアントアプリ as Client
-participant 感情認識モジュール as EmotionModule
-participant 会話管理モジュール as ConversationModule
+```mermaid
+graph LR
+    actor User(ユーザー)
+    actor Client(クライアントアプリ)
+    actor EmotionModule(感情認識モジュール)
+    actor ConversationModule(会話管理モジュール)
 
-User -> Client : 発話(音声)
-activate Client
-Client -> EmotionModule : 音声データ
-activate EmotionModule
-EmotionModule --> Client : 感情データ
-deactivate EmotionModule
-Client -> ConversationModule : 感情データ
-activate ConversationModule
-ConversationModule --> Client : 応答調整指示
-deactivate ConversationModule
-@enduml
+    User --> Client : 発話(音声)
+    Client --> EmotionModule : 音声データ
+    EmotionModule --> Client : 感情データ
+    Client --> ConversationModule : 感情データ
+    ConversationModule --> Client : 応答調整指示
 ```
 
 1. ユーザーの発話は、クライアントアプリケーションで録音されます。
@@ -307,49 +281,38 @@ deactivate ConversationModule
 
 ### 5.3 ユーザー管理機能
 
-```plantuml
-@startuml
-participant クライアントアプリ as Client
-participant Pythonサーバー as Server
-database Supabase
+```mermaid
+graph LR
+    actor Client(クライアントアプリ)
+    actor Server(Pythonサーバー)
+    database Supabase
 
-== ユーザー登録 ==
-Client -> Server : メールアドレス、パスワード
-activate Server
-Server -> Supabase : ユーザー情報保存
-activate Supabase
-Supabase --> Server : ユーザーID
-deactivate Supabase
-Server --> Client : ユーザーID
-deactivate Server
+    subgraph ユーザー登録
+        Client --> Server : メールアドレス、パスワード
+        Server --> Supabase : ユーザー情報保存
+        Supabase --> Server : ユーザーID
+        Server --> Client : ユーザーID
+    end
 
-== ログイン ==
-Client -> Server : メールアドレス、パスワード
-activate Server
-Server -> Supabase : ユーザー情報取得
-activate Supabase
-Supabase --> Server : ユーザー情報
-deactivate Supabase
-Server --> Client : アクセストークン
-deactivate Server
+    subgraph ログイン
+        Client --> Server : メールアドレス、パスワード
+        Server --> Supabase : ユーザー情報取得
+        Supabase --> Server : ユーザー情報
+        Server --> Client : アクセストークン
+    end
 
-== ログアウト ==
-Client -> Server : アクセストークン
-activate Server
-Server -> Server : アクセストークン無効化 (オプション)
-deactivate Server
+    subgraph ログアウト
+        Client --> Server : アクセストークン
+        Server --> Server : アクセストークン無効化 (オプション)
+    end
 
-== ユーザー情報取得 ==
-Client -> Server : アクセストークン
-Client -> Server : ユーザーID
-activate Server
-Server -> Supabase : ユーザー情報取得
-activate Supabase
-Supabase --> Server : ユーザー情報
-deactivate Supabase
-Server --> Client : ユーザー情報
-deactivate Server
-@enduml
+    subgraph ユーザー情報取得
+        Client --> Server : アクセストークン
+        Client --> Server : ユーザーID
+        Server --> Supabase : ユーザー情報取得
+        Supabase --> Server : ユーザー情報
+        Server --> Client : ユーザー情報
+    end
 ```
 
 1. ユーザー登録時、クライアントアプリケーションからメールアドレスとパスワードがサーバーに送信されます。

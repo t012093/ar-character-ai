@@ -18,7 +18,7 @@
 
 *   **開発言語:** Python 3.x, JavaScript (TypeScript)
 *   **AI / 言語処理:**
-    *   OpenAI API (GPT-3/GPT-4): 自然言語処理、応答生成
+    *   OpenAI API (GPT-4o-mini/GPT-o3-mini): 自然言語処理、応答生成
     *   (必要に応じて) Whisper (音声認識) 等のAPIも追加予定
 *   **AR 開発:**
     *   Unity (AR Foundation)

@@ -21,7 +21,7 @@
     *   OpenAI API (GPT-4o-mini/GPT-o3-mini): 自然言語処理、応答生成
     *   (必要に応じて) Whisper (音声認識) 等のAPIも追加予定
 *   **AR 開発:**
-    *   Unity (AR Foundation)
+    *   Unity (AR Foundation) **(バージョン: 2022.3 LTS 以上を推奨)**
     *   (必要に応じて) ARKit, ARCore, Vuforia 等
 *   **バックエンド:** Supabase
     *   PostgreSQL Database: 会話履歴、ユーザープロファイル等のデータ管理
